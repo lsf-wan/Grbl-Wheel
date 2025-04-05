@@ -90,8 +90,16 @@ const char* const GRBL_VERSION_BUILD = "20211103";
 
 #include "I2SOut.h"
 
+extern String macAddress;
+extern String ipAddress;
+extern int grblId;
+extern int TotalXPosition;
+extern float StepsPerRound;
+extern int StepsPerMm;
+
 void grbl_init();
 void run_once();
+void registerGrbl();
 
 void machine_init();                      // weak definition in Grbl.cpp
 void display_init();                      // weak definition in Grbl.cpp

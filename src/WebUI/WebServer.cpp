@@ -155,6 +155,9 @@ namespace WebUI {
         //web update
         _webserver->on("/updatefw", HTTP_ANY, handleUpdate, WebUpdateUpload);
 
+        // WebTask setup
+        WebTask::setup(_webserver);
+        
 #    ifdef ENABLE_SD_CARD
         //Direct SD management
         _webserver->on("/upload", HTTP_ANY, handle_direct_SDFileList, SDFile_direct_upload);

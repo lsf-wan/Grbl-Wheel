@@ -22,6 +22,7 @@
 
 #include "../Config.h"
 #include "Commands.h"
+#include "WebTask.h"
 
 class WebSocketsServer;
 class WebServer;
@@ -41,7 +42,7 @@ namespace WebUI {
     //Upload status
     enum class UploadStatusType : uint8_t { NONE = 0, FAILED = 1, CANCELLED = 2, SUCCESSFUL = 3, ONGOING = 4 };
 
-    class Web_Server {
+    class Web_Server : public WebTask {
     public:
         Web_Server();
 
@@ -89,7 +90,7 @@ namespace WebUI {
         static void WebUpdateUpload();
         static void pushError(int code, const char* st, bool web_error = 500, uint16_t timeout = 1000);
         static void cancelUpload();
-#ifdef ENABLE_SD_CARD
+        #ifdef ENABLE_SD_CARD
         static void handle_direct_SDFileList();
         static void SDFile_direct_upload();
         static bool deleteRecursive(String path);

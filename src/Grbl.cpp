@@ -20,6 +20,15 @@
 
 #include "Grbl.h"
 #include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+String macAddress;
+String ipAddress;
+int grblId = 0;
+int TotalXPosition = 160;
+float StepsPerRound = 146.8;
+int StepsPerMm = 1000;
 
 void grbl_init() {
 #ifdef USE_I2S_OUT
@@ -71,6 +80,55 @@ void grbl_init() {
     WebUI::bt_config.begin();
 #endif
     WebUI::inputBuffer.begin();
+    registerGrbl();
+}
+
+void registerGrbl() {
+  macAddress = WiFi.macAddress();
+  ipAddress = WiFi.localIP().toString();
+  bool rv = false;
+  String url = "https://lsf.little-shepherd.org/GrblConfig.php?mac=" + macAddress + "&ip=" + ipAddress;
+  char response[160];
+  sprintf(response, "[DEBUG] %s\r\n", url.c_str());
+  grbl_send(CLIENT_ALL, response);
+  HTTPClient http;
+  url.replace(" ", "%20");  // Replace space with %20
+  // Make the initial GET request
+  http.begin(url.c_str());  // Begin with the current URL
+  // Make the GET request
+  http.addHeader("Cache-Control", "no-cache");
+  int httpCode = http.GET();
+  // Check the response code
+  if (httpCode == HTTP_CODE_OK) {
+    StaticJsonDocument<64> doc;
+    String payload = http.getString();
+    //Serial.println(payload);
+    sprintf(response, "[DEBUG] payload=%s", payload.c_str());
+    grbl_send(CLIENT_ALL, response);
+
+    DeserializationError error = deserializeJson(doc, payload.c_str());
+    if (error) {
+      sprintf(response, "[ERROR] deserializeJson() failed:%s", error.f_str());
+      grbl_send(CLIENT_ALL, response);
+    } else {
+      if (doc["success"].as<int>() == 1) {
+        grblId = doc["id"].as<int>();
+        TotalXPosition = doc["pos"].as<int>();
+        StepsPerRound = doc["step"].as<float>();
+        StepsPerMm = doc["stepMm"].as<int>();
+        sprintf(response, "[DEBUG] pos=%d, step=%.3f, stepMm=%d\r\n", TotalXPosition, StepsPerRound, StepsPerMm);
+      } else {
+        strcpy(response, doc["msg"].as<String>().c_str());
+      }
+      //Serial.println(response);
+      grbl_send(CLIENT_ALL, response);
+    }
+  } else {
+    //Serial.printf("HTTP GET... failed, error(%d): %s, url=%s\n", httpCode, http.errorToString(httpCode).c_str(), url.c_str());
+    sprintf(response, "[DEBUG] HTTP GET failed (%d)\r\n", httpCode);
+    grbl_send(CLIENT_ALL, response);
+  }
+  http.end();  // Close connection
 }
 
 static void reset_variables() {
