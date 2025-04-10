@@ -23,6 +23,7 @@
 */
 
 #include "Grbl.h"
+#include <HTTPClient.h>
 
 static void protocol_exec_rt_suspend();
 
@@ -97,6 +98,40 @@ bool can_park() {
         sys.override_ctrl == Override::ParkingMotion &&
 #endif
         homing_enable->get() && !spindle->inLaserMode();
+}
+
+String data_server = "http://lsf.little-shepherd.org";
+String ConfigProcess = "/GrblConfig.php";
+
+unsigned long lastHeartbeat = 0;
+const unsigned long heartbeatInterval = 10000;  // 10 seconds
+
+void sendHeartbeat() {
+  char msg[120];
+  if (WiFi.status() != WL_CONNECTED) {
+    sprintf(msg, "[MSG:WiFi not connected for heartbeat]\n");
+    grbl_send(CLIENT_ALL, msg);
+    return;
+  }
+  HTTPClient http;
+  String url = data_server + ConfigProcess + "?heartbeat=" + String(time(0)) + "&control_id=" + grblId;
+  http.begin(url.c_str());
+  http.addHeader("Cache-Control", "no-cache");
+
+  int httpCode = http.GET();
+  if (httpCode == HTTP_CODE_OK) {
+    String payload = http.getString();
+    // Optional: Basic check that payload contains something expected
+    if (payload.indexOf("success") != -1) {
+      sprintf(msg, "[MSG:Heartbeat OK, Payload: %s]\n", payload.c_str());
+    } else {
+      sprintf(msg, "[MSG:Heartbeat OK but got unexpected payload: %s]\n", payload.c_str());
+    }
+  } else {
+    sprintf(msg, "[ERROR:Failed to send heartbeat: %s]\n", http.errorToString(httpCode).c_str());
+  }
+  grbl_send(CLIENT_ALL, msg);
+  http.end();
 }
 
 /*
@@ -197,6 +232,11 @@ void protocol_main_loop() {
             if (esp_timer_get_time() > stepper_idle_counter) {
                 motors_set_disable(true);
             }
+        }
+        unsigned long now = millis();
+        if (now - lastHeartbeat >= heartbeatInterval) {
+          lastHeartbeat = now;
+          sendHeartbeat();
         }
     }
     return; /* Never reached */
