@@ -87,7 +87,7 @@ void registerGrbl() {
   macAddress = WiFi.macAddress();
   ipAddress = WiFi.localIP().toString();
   bool rv = false;
-  String url = "https://lsf.little-shepherd.org/GrblConfig.php?mac=" + macAddress + "&ip=" + ipAddress;
+  String url = "http://lsf.little-shepherd.org/GrblConfig.php?mac=" + macAddress + "&ip=" + ipAddress;
   char response[160];
   sprintf(response, "[DEBUG] %s\r\n", url.c_str());
   grbl_send(CLIENT_ALL, response);
@@ -97,6 +97,7 @@ void registerGrbl() {
   http.begin(url.c_str());  // Begin with the current URL
   // Make the GET request
   http.addHeader("Cache-Control", "no-cache");
+  http.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
   int httpCode = http.GET();
   // Check the response code
   if (httpCode == HTTP_CODE_OK) {

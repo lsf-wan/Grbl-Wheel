@@ -104,7 +104,7 @@ String data_server = "http://lsf.little-shepherd.org";
 String ConfigProcess = "/GrblConfig.php";
 
 unsigned long lastHeartbeat = 0;
-const unsigned long heartbeatInterval = 10000;  // 10 seconds
+const unsigned long heartbeatInterval = 60000;  // 60 seconds
 
 void sendHeartbeat() {
   char msg[120];
@@ -123,16 +123,20 @@ void sendHeartbeat() {
     String payload = http.getString();
     // Optional: Basic check that payload contains something expected
     if (payload.indexOf("success") != -1) {
-      sprintf(msg, "[MSG:Heartbeat OK, Payload: %s]\n", payload.c_str());
+      //sprintf(msg, "[MSG:Heartbeat OK, Payload: %s]\r\n", payload.c_str());
+      http.end();
+      return;
     } else {
-      sprintf(msg, "[MSG:Heartbeat OK but got unexpected payload: %s]\n", payload.c_str());
+      sprintf(msg, "[MSG:Heartbeat OK but got unexpected payload: %s]\r\n", payload.c_str());
     }
   } else {
-    sprintf(msg, "[ERROR:Failed to send heartbeat: %s]\n", http.errorToString(httpCode).c_str());
+    grbl_send(CLIENT_ALL, url.c_str());
+    sprintf(msg, "[ERROR:Failed to send heartbeat: %d - %s]\r\n", httpCode, http.errorToString(httpCode).c_str());
   }
   grbl_send(CLIENT_ALL, msg);
   http.end();
 }
+
 
 /*
   GRBL PRIMARY LOOP:

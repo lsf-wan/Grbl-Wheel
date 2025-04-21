@@ -23,6 +23,7 @@
 */
 
 #include "Grbl.h"
+#include "Custom/wheel.h"
 
 // Allow iteration over CoordIndex values
 CoordIndex& operator++(CoordIndex& i) {
@@ -431,6 +432,12 @@ Error gc_execute_line(char* line, uint8_t client) {
                         }
                         // gc_block.modal.control = ControlMode::ExactPath; // G61
                         mg_word_bit = ModalGroup::MG13;
+                        break;
+                    case 99:
+                        handle_G99(line);
+                        // make it looks like G91
+                        gc_block.modal.distance = Distance::Incremental;
+                        mg_word_bit = ModalGroup::MG3;
                         break;
                     default:
                         FAIL(Error::GcodeUnsupportedCommand);  // [Unsupported G command]

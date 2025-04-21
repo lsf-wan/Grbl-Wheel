@@ -18,10 +18,31 @@
   along with Grbl.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+for wheel version on axis X, we need
+use esp32 version 1.0.6 for this souce code
+WebTask class for extra commands, send and wait
+with grbl settings:a_axis_settings
+$20=0
+$21=0
+$22=1
+$23=3
+$27=1.000
+add heartbeat and OTA in Protocol.cpp
+the limit switch on X/Y, pull higt/trigger low
+to disable z limit switch, in defaults.h, changed to
+# define DEFAULT_HOMING_CYCLE_0 (bit(X_AXIS) | bit(Y_AXIS))
+# define DEFAULT_HOMING_CYCLE_1 0
+in Machine.h, includes
+#include "Machines/TMC2209_4x.h"  // Or another machine configuration file
+in Config.h, add
+*/
 #include "src/Grbl.h"
+#include "src/custom/wheel.h"
 
 void setup() {
     grbl_init();
+    init_wheel_settings();
 }
 
 void loop() {

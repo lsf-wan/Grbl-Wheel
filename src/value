@@ -1,0 +1,21 @@
+./Limits.cpp:        auto steps = axis_settings[idx]->steps_per_mm->get();
+./Motors/Dynamixel2.cpp:            axis_settings[_axis_index]->home_mpos->get() * axis_settings[_axis_index]->steps_per_mm->get();  // convert to steps
+./Motors/Dynamixel2.cpp:            int32_t pos_min_steps = lround(limitsMinPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+./Motors/Dynamixel2.cpp:            int32_t pos_max_steps = lround(limitsMaxPosition(_axis_index) * axis_settings[_axis_index]->steps_per_mm->get());
+./Motors/RcServo.cpp:            axis_settings[_axis_index]->home_mpos->get() * axis_settings[_axis_index]->steps_per_mm->get();  // convert to steps
+./Motors/RcServo.cpp~:            axis_settings[_axis_index]->home_mpos->get() * axis_settings[_axis_index]->steps_per_mm->get();  // convert to steps
+./Motors/TrinamicDriver.cpp:            speed / 60.0 * axis_settings[_axis_index]->steps_per_mm->get() * (float)(256 / axis_settings[_axis_index]->microsteps->get());
+./Motors/TrinamicUartDriverClass.cpp:            speed / 60.0 * axis_settings[_axis_index]->steps_per_mm->get() * (float)(256 / axis_settings[_axis_index]->microsteps->get());
+./Planner.cpp:        target_steps[idx]       = lround(target[idx] * axis_settings[idx]->steps_per_mm->get());
+./Planner.cpp:        delta_mm                = (target_steps[idx] - position_steps[idx]) / axis_settings[idx]->steps_per_mm->get();
+./System.cpp:    float steps_per_mm = axis_settings[idx]->steps_per_mm->get();
+./System.cpp:        motors[idx] = (float)steps[idx] / axis_settings[idx]->steps_per_mm->get();
+Binary file ./WebUI/.WebTask.cpp.swo matches
+./WebUI/WebTask.cpp:        //sprintf(command, "X:StepsPerMm=%d, current=%.2f\r\n", StepsPerMm, x_axis_settings->steps_per_mm->get());
+./WebUI/WebTask.cpp:        if (x_axis_settings->steps_per_mm->get() != StepsPerMm) {
+./WebUI/WebTask.cpp:        //sprintf(command, "Y:StepsPerMm=%d, current=%.2f\r\n", yStepsPerMm, y_axis_settings->steps_per_mm->get());
+./WebUI/WebTask.cpp:        if (y_axis_settings->steps_per_mm->get() != yStepsPerMm) {
+./WebUI/WebTask.cpp.new:        //sprintf(command, "X:StepsPerMm=%d, current=%.2f\r\n", StepsPerMm, x_axis_settings->steps_per_mm->get());
+./WebUI/WebTask.cpp.new:        if (x_axis_settings->steps_per_mm->get() != StepsPerMm) {
+./WebUI/WebTask.cpp.new:        //sprintf(command, "Y:StepsPerMm=%d, current=%.2f\r\n", yStepsPerMm, y_axis_settings->steps_per_mm->get());
+./WebUI/WebTask.cpp.new:        if (y_axis_settings->steps_per_mm->get() != yStepsPerMm) {

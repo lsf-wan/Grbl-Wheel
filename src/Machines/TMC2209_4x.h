@@ -52,12 +52,20 @@
 #define Y_DRIVER_ADDRESS        1
 #define DEFAULT_Y_MICROSTEPS    16
 
+#ifdef Z_STEPPER
 #define Z_TRINAMIC_DRIVER       2209
 #define Z_STEP_PIN              GPIO_NUM_2
 #define Z_DIRECTION_PIN         GPIO_NUM_14
 #define Z_RSENSE                TMC2209_RSENSE_DEFAULT
 #define Z_DRIVER_ADDRESS        2
 #define DEFAULT_Z_MICROSTEPS    16
+#else
+#define Z_SERVO_PIN             GPIO_NUM_14
+//#define SERVO_CHANNEL 0
+//#define SERVO_FREQ 50               // 50 Hz for standard servo
+//#define SERVO_MIN_PULSE 500         // in microseconds
+//#define SERVO_MAX_PULSE 2500
+#endif
 
 #define A_TRINAMIC_DRIVER       2209
 #define A_STEP_PIN              GPIO_NUM_16
@@ -68,7 +76,9 @@
 
 #define X_LIMIT_PIN             GPIO_NUM_35
 #define Y_LIMIT_PIN             GPIO_NUM_34
+#ifdef Z_STEPER
 #define Z_LIMIT_PIN             GPIO_NUM_39
+#endif
 #define PROBE_PIN               GPIO_NUM_36
 
 // OK to comment out to use pin for other features
@@ -87,3 +97,4 @@
 // https://github.com/bdring/Grbl_Esp32/wiki/Setting-Defaults
 
 #define DEFAULT_INVERT_PROBE_PIN 1
+#define SERVO_PIN              GPIO_NUM_5

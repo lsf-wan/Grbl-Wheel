@@ -29,6 +29,8 @@
 */
 
 //#include "grbl.h"
+#include "../Machine.h"
+#include <ESP32Servo.h>
 
 namespace Spindles {
     void PWM::init() {
@@ -158,6 +160,8 @@ namespace Spindles {
     }
 
     void PWM::set_state(SpindleState state, uint32_t rpm) {
+        static Servo myServo;
+
         if (sys.abort) {
             return;  // Block during abort.
         }
@@ -168,12 +172,31 @@ namespace Spindles {
             if (use_delays && (_current_state != state)) {
                 delay(_spindown_delay);
             }
+            // reset the servo to 0 degree when the spindle is disabled
+            if (myServo.attached()) {
+                myServo.write(0);  // Set servo to 0 degrees (or home position)
+            }
         } else {
             set_dir_pin(state == SpindleState::Cw);
             set_rpm(rpm);
             set_enable_pin(state != SpindleState::Disable);  // must be done after setting rpm for enable features to work
             if (use_delays && (_current_state != state)) {
                 delay(_spinup_delay);
+            }
+            // Control the servo based on the RPM value
+            if (state == SpindleState::Cw && !myServo.attached()) {
+                myServo.setPeriodHertz(50);  // Servo control = 50Hz
+                myServo.attach(SERVO_PIN, 900, 2400);  // Attach the servo to SERVO_PIN
+            }
+
+            if (state == SpindleState::Cw) {
+                if (rpm > 1000) rpm = 1000;
+                int angle = map(rpm, 0, 1000, 0, 180);  // Map RPM to servo angle (0 to 180 degrees)
+                myServo.write(angle);                   // Move servo to the mapped angle
+                //char msg[64];
+                //snprintf(msg, sizeof(msg), "RPM=%d, angle=%d, State=%d\n", rpm, angle, (int)state);
+                //grbl_send(CLIENT_ALL, msg);
+
             }
         }
 
