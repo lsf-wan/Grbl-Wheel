@@ -74,8 +74,10 @@
 #define A_DRIVER_ADDRESS        3
 #define DEFAULT_A_MICROSTEPS    16
 
-#define X_LIMIT_PIN             GPIO_NUM_35
-#define Y_LIMIT_PIN             GPIO_NUM_34
+//#define X_LIMIT_PIN             GPIO_NUM_35
+//#define Y_LIMIT_PIN             GPIO_NUM_34
+#define X_LIMIT_PIN             GPIO_NUM_18
+#define Y_LIMIT_PIN             GPIO_NUM_19
 #ifdef Z_STEPER
 #define Z_LIMIT_PIN             GPIO_NUM_39
 #endif
