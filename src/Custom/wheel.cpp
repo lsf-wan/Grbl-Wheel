@@ -30,7 +30,7 @@ void handle_G99(char *line) {
     char msg[120];
     // get X value from the line (position)
     sprintf(msg, "line=%s\r\n", line);
-    grbl_msg_sendf(CLIENT_ALL, MsgLevel::Info, msg);
+    //grbl_msg_sendf(CLIENT_ALL, MsgLevel::Info, msg);
 
     char *xptr = strchr(line, 'X');
     if (!xptr) {
@@ -44,10 +44,10 @@ void handle_G99(char *line) {
     int counterClockwise = (currentPosition - targetPosition + TotalXPosition) % TotalXPosition;
     int moveAmount = (clockwise <= counterClockwise) ? clockwise : -counterClockwise;
     gc_block.values.xyz[X_AXIS] = (float)moveAmount * stepsPerPos;
-    sprintf(msg, "[DEB] current=%d, target=%d, move=%d, %.3f steps\r\n", currentPosition, targetPosition, moveAmount, gc_block.values.xyz[X_AXIS]);
-    grbl_send(CLIENT_ALL, msg);
     // insert G0 and modify X to the steps (pos or neg)
     sprintf(xptr, "G0X%.3f", gc_block.values.xyz[X_AXIS]);
-    sprintf(msg, "mocked line=%s\r\n", line);
-    grbl_msg_sendf(CLIENT_ALL, MsgLevel::Info, msg);
+    sprintf(msg, "[DEB] current=%d, target=%d, move=%d, %.3f steps, %s\r\n", currentPosition, targetPosition, moveAmount, gc_block.values.xyz[X_AXIS], line);
+    grbl_send(CLIENT_ALL, msg);
+    //sprintf(msg, "mocked line=%s", line);
+    //grbl_msg_sendf(CLIENT_ALL, MsgLevel::Info, msg);
 }
