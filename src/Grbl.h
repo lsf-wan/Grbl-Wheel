@@ -94,8 +94,9 @@ extern String macAddress;
 extern String ipAddress;
 extern int grblId;
 extern int TotalXPosition;
-extern float StepsPerRound;
-extern int StepsPerMm;
+extern float xStepsPerRound;
+extern int xStepsPerMm;
+extern int yStepsPerMm;
 
 void grbl_init();
 void run_once();

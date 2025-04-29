@@ -27,8 +27,9 @@ String macAddress;
 String ipAddress;
 int grblId = 0;
 int TotalXPosition = 160;
-float StepsPerRound = 146.8;
-int StepsPerMm = 1000;
+float xStepsPerRound = 146.8;
+int xStepsPerMm = 1000;
+int yStepsPerMm = 1000;
 
 void grbl_init() {
 #ifdef USE_I2S_OUT
@@ -88,7 +89,7 @@ void registerGrbl() {
   ipAddress = WiFi.localIP().toString();
   bool rv = false;
   String url = "http://lsf.little-shepherd.org/GrblConfig.php?mac=" + macAddress + "&ip=" + ipAddress;
-  char response[160];
+  char response[200];
   sprintf(response, "[DEBUG] %s\r\n", url.c_str());
   grbl_send(CLIENT_ALL, response);
   HTTPClient http;
@@ -114,10 +115,11 @@ void registerGrbl() {
     } else {
       if (doc["success"].as<int>() == 1) {
         grblId = doc["id"].as<int>();
-        TotalXPosition = doc["pos"].as<int>();
-        StepsPerRound = doc["step"].as<float>();
-        StepsPerMm = doc["stepMm"].as<int>();
-        sprintf(response, "[DEBUG] pos=%d, step=%.3f, stepMm=%d\r\n", TotalXPosition, StepsPerRound, StepsPerMm);
+        TotalXPosition = doc["xpos"].as<int>();
+        xStepsPerRound = doc["xstep"].as<float>();
+        xStepsPerMm = doc["xstepMm"].as<int>();
+        yStepsPerMm = doc["ystepMm"].as<int>();
+        sprintf(response, "[DEBUG] pos=%d, step=%.3f, stepMm=%d\r\n", TotalXPosition, xStepsPerRound, xStepsPerMm);
       } else {
         strcpy(response, doc["msg"].as<String>().c_str());
       }

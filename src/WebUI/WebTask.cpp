@@ -30,7 +30,7 @@ void WebTask::processQueueTask(void *parameter) {
             processingCommand = true;
             // if it is a special move command for wheel
             if (strncmp("Move:", obj.command, 5) == 0) {
-                const float factor = StepsPerRound / TotalXPosition;
+                const float factor = xStepsPerRound / TotalXPosition;
                 int targetPosition = std::strtol(obj.command + 5, nullptr, 10) % TotalXPosition;
                 float* print_position = system_get_mpos();
                 int currentPosition = (((int)(print_position[X_AXIS] / factor) + TotalXPosition) % TotalXPosition);
@@ -60,15 +60,15 @@ void WebTask::processQueueTask(void *parameter) {
 void WebTask::handleCommandRequest() {
     if (server->hasArg("cmd")) {
         char command[20];
-        //sprintf(command, "X:StepsPerMm=%d, current=%.2f\r\n", StepsPerMm, x_axis_settings->steps_per_mm->get());
+        //sprintf(command, "X:xStepsPerMm=%d, current=%.2f\r\n", xStepsPerMm, x_axis_settings->steps_per_mm->get());
         //grbl_send(CLIENT_ALL, command);
-        if (x_axis_settings->steps_per_mm->get() != StepsPerMm) {
-            sprintf(command, "$100=%d\r\n", StepsPerMm);
+        if (x_axis_settings->steps_per_mm->get() != xStepsPerMm) {
+            sprintf(command, "$100=%d\r\n", xStepsPerMm);
             grbl_send(CLIENT_ALL, command);
             execute_line(command, CLIENT_WEBUI, WebUI::AuthenticationLevel::LEVEL_ADMIN);
         }
         int yStepsPerMm = 1000;
-        //sprintf(command, "Y:StepsPerMm=%d, current=%.2f\r\n", yStepsPerMm, y_axis_settings->steps_per_mm->get());
+        //sprintf(command, "Y:xStepsPerMm=%d, current=%.2f\r\n", yStepsPerMm, y_axis_settings->steps_per_mm->get());
         //grbl_send(CLIENT_ALL, command);
         if (y_axis_settings->steps_per_mm->get() != yStepsPerMm) {
             sprintf(command, "$101=%d\r\n", yStepsPerMm);

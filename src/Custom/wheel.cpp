@@ -1,7 +1,6 @@
 #include "wheel.h"
 #include "../Grbl.h"
 
-const int yStepsPerMm = 1000;
 extern parser_block_t gc_block;
 
 // $100, $101 and $901 (custom parameter)
@@ -9,11 +8,11 @@ void init_wheel_settings() {
     char command[120];
     new IntSetting(GRBL, WG, "901", "Wheel/TotalPositions", TotalXPosition, 1, 360);
 
-    sprintf(command, "$20=0\r\n$21=0\r\n$22=1\r\n$21=3\r\n$27=1\r\n", StepsPerMm);
+    sprintf(command, "$20=0\r\n$21=0\r\n$22=1\r\n$21=3\r\n$27=1\r\n", xStepsPerMm);
     grbl_send(CLIENT_ALL, command);
     execute_line(command, CLIENT_WEBUI, WebUI::AuthenticationLevel::LEVEL_ADMIN);
 
-    sprintf(command, "$100=%d\r\n", StepsPerMm);
+    sprintf(command, "$100=%d\r\n", xStepsPerMm);
     grbl_send(CLIENT_ALL, command);
     execute_line(command, CLIENT_WEBUI, WebUI::AuthenticationLevel::LEVEL_ADMIN);
 
@@ -39,7 +38,7 @@ void handle_G99(char *line) {
         return;
     }
     int targetPosition = atoi(xptr + 1) % TotalXPosition;
-    const float stepsPerPos = StepsPerRound / TotalXPosition;
+    const float stepsPerPos = xStepsPerRound / TotalXPosition;
     int currentPosition = (((int)(system_get_mpos()[X_AXIS] / stepsPerPos) + TotalXPosition) % TotalXPosition);
     int clockwise = (targetPosition - currentPosition + TotalXPosition) % TotalXPosition;
     int counterClockwise = (currentPosition - targetPosition + TotalXPosition) % TotalXPosition;
