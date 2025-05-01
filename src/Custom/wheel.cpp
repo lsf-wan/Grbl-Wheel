@@ -8,7 +8,7 @@ void init_wheel_settings() {
     char command[120];
     new IntSetting(GRBL, WG, "901", "Wheel/TotalPositions", TotalXPosition, 1, 360);
 
-    sprintf(command, "$20=0\r\n$21=0\r\n$22=1\r\n$21=3\r\n$27=1\r\n", xStepsPerMm);
+    sprintf(command, "$20=0\r\n$21=0\r\n$22=1\r\n$21=3\r\n$27=%0.3f\r\n", xStepsPerRound/TotalXPosition);
     grbl_send(CLIENT_ALL, command);
     execute_line(command, CLIENT_WEBUI, WebUI::AuthenticationLevel::LEVEL_ADMIN);
 
