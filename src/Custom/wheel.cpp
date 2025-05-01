@@ -39,7 +39,7 @@ void handle_G99(char *line) {
     }
     int targetPosition = atoi(xptr + 1) % TotalXPosition;
     const float stepsPerPos = xStepsPerRound / TotalXPosition;
-    int currentPosition = (((int)(system_get_mpos()[X_AXIS] / stepsPerPos) + TotalXPosition) % TotalXPosition);
+    int currentPosition = (((int)round(system_get_mpos()[X_AXIS] / stepsPerPos) + TotalXPosition) % TotalXPosition);
     int clockwise = (targetPosition - currentPosition + TotalXPosition) % TotalXPosition;
     int counterClockwise = (currentPosition - targetPosition + TotalXPosition) % TotalXPosition;
     int moveAmount = (clockwise <= counterClockwise) ? clockwise : -counterClockwise;
